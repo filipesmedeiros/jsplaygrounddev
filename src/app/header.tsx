@@ -2,11 +2,7 @@ import cn from 'classnames';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useContext } from 'react';
-import {
-  AiOutlineFullscreen,
-  AiOutlineFullscreenExit,
-  AiOutlineGithub,
-} from 'react-icons/ai';
+import { AiOutlineGithub } from 'react-icons/ai';
 import { MdDarkMode, MdLightMode } from 'react-icons/md';
 
 import Button from '../components/button';
@@ -79,7 +75,7 @@ export default function Header() {
         </SSR>
 
         <a
-          href="https://github.com/tiagovtristao/jsplaygrounddev"
+          href="https://github.com/filipesmedeiros/jsplaygrounddev"
           target="_blank"
           aria-label="GitHub account"
         >
