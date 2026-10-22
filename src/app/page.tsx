@@ -18,11 +18,9 @@ export default function HomePage() {
   >('playground', {
     defaultValue: 'js',
   });
-  const [maximizeREPL, setMaximizeREPL] = useLocalStorageState('maximized', {
-    defaultValue: false,
-  });
+
   const [autoRun, setAutoRun] = useLocalStorageState('autorun', {
-    defaultValue: true,
+    defaultValue: false,
   });
 
   const [replContainer, setREPLContainer] = useState<HTMLDivElement | null>(
@@ -43,8 +41,6 @@ export default function HomePage() {
             setTheme,
             playground,
             setPlayground,
-            maximizeREPL,
-            setMaximizeREPL,
             autoRun,
             setAutoRun,
           }}
@@ -56,7 +52,7 @@ export default function HomePage() {
               <hgroup className="absolute top-10 inset-x-0 text-center flex flex-col items-center">
                 <h1
                   className={cn(
-                    'px-4 py-1 text-3xl tracking-wide bg-gradient-to-r from-[#2fafff] to-[#737373] bg-clip-text text-transparent',
+                    'px-4 py-1 text-3xl tracking-wide bg-linear-to-r from-[#2fafff] to-[#737373] bg-clip-text text-transparent',
                     'dark:from-[#00ecbc] dark:to-[#2fafff]',
                   )}
                 >

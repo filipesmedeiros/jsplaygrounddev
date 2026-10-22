@@ -12,19 +12,11 @@ import { MdDarkMode, MdLightMode } from 'react-icons/md';
 import Button from '../components/button';
 import { REPLContext } from '../components/repl';
 import SSR from '../components/ssr';
-import useTailwindBreakpoint from '../hooks/useTailwindBreakpoint';
 import LogoSVG from '../../public/logo.svg';
 
 export default function Header() {
-  const { matches: isSm } = useTailwindBreakpoint('sm');
-  const {
-    theme,
-    setTheme,
-    playground,
-    setPlayground,
-    maximizeREPL,
-    setMaximizeREPL,
-  } = useContext(REPLContext)!;
+  const { theme, setTheme, playground, setPlayground } =
+    useContext(REPLContext)!;
 
   return (
     <header className="px-4 h-14 flex items-center">
@@ -44,7 +36,7 @@ export default function Header() {
             )}
           >
             <Button
-              className={cn('rounded w-14', {
+              className={cn('rounded w-14 cursor-pointer', {
                 'text-[#0076cf] dark:text-[#2fafff]': playground === 'js',
                 'hover:text-[#0076cf] dark:hover:text-[#2fafff]':
                   playground !== 'js',
@@ -57,7 +49,7 @@ export default function Header() {
             <span role="presentation">·</span>
 
             <Button
-              className={cn('rounded w-14', {
+              className={cn('rounded w-14 cursor-pointer', {
                 'text-[#0076cf] dark:text-[#2fafff]': playground === 'web',
                 'hover:text-[#0076cf] dark:hover:text-[#2fafff]':
                   playground !== 'web',
@@ -66,20 +58,6 @@ export default function Header() {
             >
               Web
             </Button>
-
-            {isSm && (
-              <Button
-                title={maximizeREPL ? 'Minimize' : 'Maximize'}
-                as={
-                  maximizeREPL ? AiOutlineFullscreenExit : AiOutlineFullscreen
-                }
-                className={cn(
-                  'ml-1 border-l border-[#cccccc] w-9 text-xl text-[#5f5f5f] hover:text-[#0076cf]',
-                  'dark:border-[#30363d] dark:text-white dark:hover:text-[#2fafff]',
-                )}
-                onClick={() => setMaximizeREPL(!maximizeREPL)}
-              />
-            )}
           </div>
         )}
       </SSR>

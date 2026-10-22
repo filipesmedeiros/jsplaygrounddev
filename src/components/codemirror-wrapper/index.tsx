@@ -33,6 +33,8 @@ export default function CodeMirrorWrapper({
         '[&_.cm-gutters]:bg-inherit',
         // Remove outline
         '[&_.cm-focused]:outline-none',
+        // Full width
+        '[&_.cm-editor]:w-full',
       )}
       onChange={(value, viewUpdate) => {
         if (viewUpdate.docChanged) {

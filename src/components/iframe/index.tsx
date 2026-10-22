@@ -93,15 +93,17 @@ const IFrame = forwardRef<IFrameHandle, Props>(
     );
 
     return (
-      <iframe
-        className="bg-white text-black"
-        ref={(iframe) => setIframe(iframe)}
-        title={title}
-        name={name}
-        src={objectURL}
-        width={width}
-        height={height}
-      />
+      objectURL && (
+        <iframe
+          className="bg-white text-black"
+          ref={(iframe) => setIframe(iframe)}
+          title={title}
+          name={name}
+          src={objectURL}
+          width={width}
+          height={height}
+        />
+      )
     );
   },
 );
