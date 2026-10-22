@@ -63,7 +63,7 @@ const IFrame = forwardRef<IFrameHandle, Props>(
 
         setObjectURL(url);
       }
-    }, [disabled, html, css, js, webJs, preScript, setObjectURL]);
+    }, [disabled, html, css, js, webJs, preScript, playground, setObjectURL]);
 
     useEffect(() => {
       if (previousObjectURLRef.current) {
