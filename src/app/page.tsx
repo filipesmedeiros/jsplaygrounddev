@@ -23,10 +23,6 @@ export default function HomePage() {
     defaultValue: false,
   });
 
-  const [replContainer, setREPLContainer] = useState<HTMLDivElement | null>(
-    null,
-  );
-
   return (
     <div className="h-full text-sm">
       <div
@@ -63,11 +59,8 @@ export default function HomePage() {
                 </h2>
               </hgroup>
 
-              <div
-                ref={(ref) => setREPLContainer(ref)}
-                className="relative flex flex-col justify-center items-center w-full h-full"
-              >
-                <REPL container={replContainer} />
+              <div className="relative flex flex-col justify-center items-center w-full h-full">
+                <REPL />
               </div>
             </div>
           </SSR>

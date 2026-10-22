@@ -1,4 +1,4 @@
-import { type ReactElement, cloneElement, useEffect, useRef } from 'react';
+import { type ReactElement, cloneElement, useRef } from 'react';
 import cn from 'classnames';
 
 import useResizer from '../../hooks/useResizer';
@@ -35,8 +35,12 @@ export default function ResizableDualPanel({
         }}
       >
         {cloneElement(leftPanel, {
-          ...leftPanel.props,
-          className: cn(leftPanel.props.className, 'flex-one'),
+          ...(leftPanel.props as object),
+          // @ts-ignore
+          className: cn(
+            (leftPanel.props as { className?: string }).className,
+            'flex-one',
+          ),
         })}
       </div>
 
@@ -59,8 +63,12 @@ export default function ResizableDualPanel({
         }}
       >
         {cloneElement(rightPanel, {
-          ...rightPanel.props,
-          className: cn(rightPanel.props.className, 'flex-one'),
+          ...(rightPanel.props as object),
+          // @ts-ignore
+          className: cn(
+            (rightPanel.props as { className?: string }).className,
+            'flex-one',
+          ),
         })}
       </div>
     </div>
