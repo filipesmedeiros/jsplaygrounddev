@@ -1,11 +1,9 @@
-# JSPlayground.dev
+# Differences to the original JS Playground
 
-A no-fuss JavaScript playground with instant feedback.
+1. Auto-backup/persistence to local storage (nothing leaves the browser and the local machine)
+2. Editor is always full screen (this is because Tailwind stopped exporting a function to access the config in Javascript, and I didn't want to spend much time figuring that out)
+3. Every dependence is updated to its most recent version (including major updates)
 
-## Goal
+## Hosted version
 
-It was created with the goal to provide a simple, fast and elegant playground for quickly prototyping JavaScript (and other web technologies) with instant feedback — without relying on any server dynamism.
-
-## New features
-
-Any feature request is open to consideration, as long as it does not require more than what a static web server can offer.
+https://jsplayground.filipesm.eu
