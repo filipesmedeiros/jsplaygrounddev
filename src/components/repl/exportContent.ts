@@ -4,9 +4,10 @@ interface ExportContentProps {
   css: string;
   html: string;
   webJs: string;
+  js: string;
 }
 
-export const exportContent = ({ css, html, webJs: js }: ExportContentProps) => {
+export const exportContent = ({ css, html, webJs, js }: ExportContentProps) => {
   const zip = new JSZip();
 
   const htmlContent = `
@@ -27,7 +28,8 @@ export const exportContent = ({ css, html, webJs: js }: ExportContentProps) => {
 
   zip.file('index.html', htmlContent);
   zip.file('styles.css', css);
-  zip.file('script.js', js);
+  zip.file('script.js', webJs);
+  zip.file('console.js', js);
 
   zip.generateAsync({ type: 'blob' }).then((content) => {
     const url = URL.createObjectURL(content);

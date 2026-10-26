@@ -10,22 +10,25 @@ import {
   useState,
   useRef,
   useEffect,
-  useMemo,
   useReducer,
+  useCallback,
 } from 'react';
 import { AiOutlineSync } from 'react-icons/ai';
 import { FiDownload, FiPlay } from 'react-icons/fi';
 
 import Button from '../button';
 import CodeMirrorWrapper from '../codemirror-wrapper';
-import Console, { iframeGlueScriptConstructor } from '../console';
+import {
+  WebConsole,
+  TerminalConsole,
+  iframeGlueScriptConstructor,
+} from '../console';
 import IFrame, { IFrameHandle } from '../iframe';
 import ResizableDualPanel from '../resizable-dual-panel';
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from '../tabs';
 
-import { defaultHTML, defaultCSS, defaultJS } from './constants';
 import jsValidator from './js-validator';
-import { exportContent } from './exportContent';
+import { exportContent as _exportContent } from './exportContent';
 
 export interface REPLContext {
   theme: 'light' | 'dark';
@@ -79,6 +82,8 @@ const playgrounds = {
 
 type Playgrounds = typeof playgrounds;
 
+const glue = iframeGlueScriptConstructor();
+
 export default function REPL() {
   const { theme, playground, autoRun, setAutoRun } = useContext(REPLContext)!;
   const [tabs, dispatch] = useReducer(reducer, playgrounds[playground]);
@@ -91,11 +96,6 @@ export default function REPL() {
   }, [playground]);
 
   const outputRef = useRef<IFrameHandle>(null);
-
-  const consoleFeedIframeGlueScript = useMemo(
-    () => iframeGlueScriptConstructor(process.env.NEXT_PUBLIC_SITE_URL!),
-    [],
-  );
 
   const [html, setHTML] = useState<string>(localStorage.getItem('html') ?? '');
   const [css, setCSS] = useState<string>(localStorage.getItem('css') ?? '');
@@ -122,17 +122,22 @@ export default function REPL() {
     localStorage.setItem('js', delayJS);
   }, [delayJS]);
 
-  const content = useMemo(() => {
-    if (!html && !css && !webJs && !js) {
-      return {
-        html: defaultHTML,
-        css: defaultCSS,
-        webJs: defaultJS,
-        js: defaultJS,
-      };
-    }
-    return { html, css, webJs: jsValidator(webJs), js: jsValidator(js) };
-  }, [html, css, webJs, js]);
+  const exportContent = useCallback(() => {
+    _exportContent({
+      html,
+      css,
+      js: jsValidator(js),
+      webJs: jsValidator(webJs),
+    });
+  }, [html, css, js, webJs]);
+
+  const reloadIframe = useCallback(() => {
+    outputRef.current?.reload({
+      html,
+      css,
+      js: jsValidator(webJs),
+    });
+  }, [outputRef.current, html, css, webJs]);
 
   return (
     <div className="bg-[#ffffff] flex flex-col dark:bg-[#161b22] w-full h-full">
@@ -154,22 +159,24 @@ export default function REPL() {
                     title="Export"
                     as={FiDownload}
                     className="text-xl text-[#0076cf] dark:text-[#2fafff]"
-                    onClick={() => exportContent(content)}
+                    onClick={exportContent}
                   />
-                  <Button
-                    title={autoRun ? 'Disable auto-run' : 'Enable auto-run'}
-                    as={AiOutlineSync}
-                    className={cn('text-xl', {
-                      'text-[#0076cf] dark:text-[#2fafff]': autoRun,
-                      'text-[#a1a1a1] dark:text-[#7d8590]': !autoRun,
-                    })}
-                    onClick={() => setAutoRun((value) => !value)}
-                  />
+                  {playground === 'js' && (
+                    <Button
+                      title={autoRun ? 'Disable auto-run' : 'Enable auto-run'}
+                      as={AiOutlineSync}
+                      className={cn('text-xl', {
+                        'text-[#0076cf] dark:text-[#2fafff]': autoRun,
+                        'text-[#a1a1a1] dark:text-[#7d8590]': !autoRun,
+                      })}
+                      onClick={() => setAutoRun((value) => !value)}
+                    />
+                  )}
                   <Button
                     title={autoRun ? 'Re-run' : 'Run'}
                     as={FiPlay}
                     className="text-xl text-[#0076cf] dark:text-[#2fafff]"
-                    onClick={() => outputRef.current!.reload()}
+                    onClick={reloadIframe}
                   />
                 </>
               }
@@ -191,7 +198,7 @@ export default function REPL() {
                   theme={theme}
                   extensions={[cmHTML()]}
                   value={html}
-                  onChange={(value) => setHTML(value)}
+                  onChange={setHTML}
                 />
               </TabPanel>
               <TabPanel id="css">
@@ -200,7 +207,7 @@ export default function REPL() {
                   theme={theme}
                   extensions={[cmCSS()]}
                   value={css}
-                  onChange={(value) => setCSS(value)}
+                  onChange={setCSS}
                 />
               </TabPanel>
               <TabPanel id="js">
@@ -236,26 +243,33 @@ export default function REPL() {
                 Console
               </Tab>
             </TabList>
-            <TabPanels>
-              <TabPanel id="output">
-                <IFrame
-                  ref={outputRef}
-                  name="output"
-                  width="100%"
-                  title="Output"
-                  content={content}
-                  preScript={consoleFeedIframeGlueScript}
-                  disabled={!autoRun}
-                />
-              </TabPanel>
-              <TabPanel id="console">
-                <Console
-                  className="flex-one"
-                  theme={theme}
-                  iframe={outputRef.current!?.element}
-                />
-              </TabPanel>
-            </TabPanels>
+            {playground === 'js' ? (
+              <TabPanels>
+                <></>
+                <TabPanel id="console">
+                  <TerminalConsole className="flex-one" theme={theme} js={js} />
+                </TabPanel>
+              </TabPanels>
+            ) : (
+              <TabPanels>
+                <TabPanel id="output">
+                  <IFrame
+                    ref={outputRef}
+                    name="output"
+                    width="100%"
+                    title="Output"
+                    preScript={glue}
+                  />
+                </TabPanel>
+                <TabPanel id="console">
+                  <WebConsole
+                    className="flex-one"
+                    theme={theme}
+                    iframe={outputRef.current?.element}
+                  />
+                </TabPanel>
+              </TabPanels>
+            )}
           </Tabs>
         }
       />

@@ -1,8 +1,8 @@
 import { ConsoleFeedGlobalVariables } from './constants';
 
-export function iframeGlueScriptConstructor(siteUrl: string): string {
+export function iframeGlueScriptConstructor(): string {
   const args = JSON.stringify([
-    siteUrl,
+    process.env.NEXT_PUBLIC_SITE_URL!,
     ConsoleFeedGlobalVariables.HOOK,
     ConsoleFeedGlobalVariables.ENCODE,
   ]).slice(1, -1);

@@ -78,12 +78,12 @@ export default function Prompt({ onSubmit }: Props) {
       onSubmit={preventDefault}
       onClick={() => inputRef?.current?.focus()}
     >
-      <BiChevronRight className="ml-[6px] w-4 h-auto text-[#0076cf] dark:text-[#2fafff]" />
+      <BiChevronRight className="ml-1.5 w-4 h-auto text-[#0076cf] dark:text-[#2fafff]" />
 
       <input
         ref={inputRef}
         className={cn(
-          'ml-[12px] my-[2px] flex-one w-full bg-inherit text-[#2d2d2d] outline-none',
+          'ml-3 my-0.5 flex-one w-full bg-inherit text-[#2d2d2d] outline-none',
           'dark:text-[#c9d1d9]',
         )}
         type="text"

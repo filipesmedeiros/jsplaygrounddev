@@ -7,10 +7,11 @@ import {
   useContext,
 } from 'react';
 import { REPLContext } from '../repl';
+import cn from 'classnames';
 
 export interface IFrameHandle {
   element: HTMLIFrameElement | null;
-  reload: () => void;
+  reload(content: { html: string; css: string; js: string }): void;
 }
 
 interface Props {
@@ -18,52 +19,18 @@ interface Props {
   width?: string | number;
   height?: string | number;
   title: string;
-  content: {
-    html: string;
-    css: string;
-    js: string;
-    webJs: string;
-  };
   preScript?: string;
-  disabled?: boolean;
+  className?: string;
 }
 
 const IFrame = forwardRef<IFrameHandle, Props>(
   (
-    {
-      name,
-      width = 'auto',
-      height = 'auto',
-      title,
-      content: { html, css, js, webJs },
-      preScript,
-      disabled = false,
-    },
+    { name, width = 'auto', height = 'auto', title, preScript, className },
     ref,
   ) => {
     const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null);
     const [objectURL, setObjectURL] = useState('');
     const previousObjectURLRef = useRef<string | null>(null);
-
-    const { playground } = useContext(REPLContext)!;
-
-    useEffect(() => {
-      if (!disabled) {
-        const document = renderDocument(
-          html,
-          css,
-          playground === 'web' ? webJs : js,
-          {
-            preScript,
-          },
-        );
-        const url = URL.createObjectURL(
-          new Blob([document], { type: 'text/html' }),
-        );
-
-        setObjectURL(url);
-      }
-    }, [disabled, html, css, js, webJs, preScript, playground, setObjectURL]);
 
     useEffect(() => {
       if (previousObjectURLRef.current) {
@@ -73,30 +40,26 @@ const IFrame = forwardRef<IFrameHandle, Props>(
       previousObjectURLRef.current = objectURL;
     }, [objectURL]);
 
-    useImperativeHandle(
-      ref,
-      () => {
-        return {
-          element: iframe,
-          reload: () => {
-            const document = renderDocument(html, css, js, {
-              preScript,
-            });
-            const url = URL.createObjectURL(
-              new Blob([document], { type: 'text/html' }),
-            );
-            setObjectURL(url);
-          },
-        };
-      },
-      [iframe, html, css, js, preScript, setObjectURL],
-    );
+    useImperativeHandle(ref, () => {
+      return {
+        element: iframe,
+        reload({ html, css, js }) {
+          const document = renderDocument(html, css, js, {
+            preScript,
+          });
+          const url = URL.createObjectURL(
+            new Blob([document], { type: 'text/html' }),
+          );
+          setObjectURL(url);
+        },
+      };
+    }, [iframe, preScript, setObjectURL]);
 
     return (
       objectURL && (
         <iframe
-          className="bg-white text-black"
-          ref={(iframe) => setIframe(iframe)}
+          className={cn('bg-white text-black', className)}
+          ref={setIframe}
           title={title}
           name={name}
           src={objectURL}
