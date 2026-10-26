@@ -161,7 +161,7 @@ export default function REPL() {
                     className="text-xl text-[#0076cf] dark:text-[#2fafff]"
                     onClick={exportContent}
                   />
-                  {playground === 'js' && (
+                  {/*{playground === 'js' && (
                     <Button
                       title={autoRun ? 'Disable auto-run' : 'Enable auto-run'}
                       as={AiOutlineSync}
@@ -171,7 +171,7 @@ export default function REPL() {
                       })}
                       onClick={() => setAutoRun((value) => !value)}
                     />
-                  )}
+                  )}*/}
                   <Button
                     title={autoRun ? 'Re-run' : 'Run'}
                     as={FiPlay}
